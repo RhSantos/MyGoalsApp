@@ -4,6 +4,7 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
@@ -47,12 +48,12 @@ fun OutsideNavigation(
     colorScheme: ColorScheme,
     typography: Typography,
     userViewModel: UserViewModel,
-    addressViewModel: AddressViewModel
+    addressViewModel: AddressViewModel,
+    loggedUser : MutableState<User>
 ) {
     val context = LocalContext.current
     val navController = rememberNavController()
     val snackbarHostState = remember { SnackbarHostState() }
-    val loggedUser = remember { mutableStateOf(User.emptyUser(context)) }
 
     NavHost(navController = navController, startDestination = Routes.StartScreen.route) {
         composable(Routes.StartScreen.route) {

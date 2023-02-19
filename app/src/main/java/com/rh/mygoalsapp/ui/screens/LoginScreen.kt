@@ -135,7 +135,7 @@ fun LoginScreen(
                     textLabel = "Senha:",
                     keyboardType = KeyboardType.Password,
                     finalInput = true
-                ) { entrarFunc.invoke() }
+                ) { entrarFunc() }
                 Spacer(Modifier.height(72.dp))
                 val focusManager = LocalFocusManager.current
                 ButtonComponent(
@@ -145,7 +145,7 @@ fun LoginScreen(
                     primaryButton = true
                 ) {
                     focusManager.clearFocus()
-                    entrarFunc.invoke()
+                    entrarFunc()
                 }
             }
 

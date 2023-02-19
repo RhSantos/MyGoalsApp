@@ -11,16 +11,23 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.Start
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.rh.mygoalsapp.R
+import com.rh.mygoalsapp.ui.ButtonComponent
+import com.rh.mygoalsapp.ui.LabeledEditText
 import com.rh.mygoalsapp.ui.theme.MyGoalsAppTheme
 import com.rh.mygoalsapp.util.Constants.monthNameByMonthInt
 import java.time.LocalDate
@@ -38,6 +45,8 @@ fun NewGoalScreen(
     snackbarHostState: SnackbarHostState,
     loggedUser: MutableState<User>*/
 ) {
+    val objectiveNumber by remember { mutableStateOf(1) }
+    val nomeObjetivoState = remember { mutableStateOf(TextFieldValue("")) }
     Scaffold(
         //snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         content = { paddingValues ->
@@ -46,10 +55,48 @@ fun NewGoalScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(colorScheme.background)
-                    .padding(top = 30.dp, start = 30.dp, end = 30.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(30.dp),
+                horizontalAlignment = Start
             ) {
-                CalendarComponent(colorScheme = colorScheme, typography = typography)
+
+                Text(
+                    "Objetivo #${objectiveNumber}",
+                    style = typography.titleLarge,
+                    fontSize = 40.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(Modifier.height(35.dp))
+
+                LabeledEditText(
+                    colorScheme = colorScheme,
+                    typography = typography,
+                    editTextValue = nomeObjetivoState,
+                    textLabel = "Nome do Objetivo:",
+                    finalInput = true
+                ) {
+
+                }
+                Spacer(Modifier.height(30.dp))
+
+                Text(
+                    modifier = Modifier.padding(start = 11.dp),
+                    text = "Dia do Objetivo:",
+                    style = typography.labelMedium.copy(
+                        fontSize = 20.sp,
+                        color = colorScheme.tertiary
+                    )
+                )
+                Spacer(Modifier.height(6.dp))
+                CalendarComponent(colorScheme = colorScheme, typography = typography,withYearText = true)
+                Spacer(Modifier.height(20.dp))
+                ButtonComponent(
+                    colorScheme = colorScheme,
+                    typography = typography,
+                    labelText = "Adicionar",
+                    primaryButton = true
+                ) {
+
+                }
             }
 
             paddingValues
@@ -57,39 +104,39 @@ fun NewGoalScreen(
     )
 }
 
-//@Preview (showBackground = true)
-//@Composable
-//fun NewGoalScreenPreview() {
-//    MyGoalsAppTheme {
-//        val context = LocalContext.current
-//        AddGoalScreen(
-//            colorScheme = MaterialTheme.colorScheme,
-//            typography = MaterialTheme.typography,
-//            navController = rememberNavController(),
-//            /*userViewModel = viewModel(),
-//            addressViewModel = viewModel(),
-//            snackbarHostState = remember { SnackbarHostState() },
-//            loggedUser = remember { mutableStateOf(User.emptyUser(context)) }*/
-//        )
-//    }
-//}
-
-@Preview
+@Preview(showBackground = true)
 @Composable
-fun CalendarComponentPreview() {
+fun NewGoalScreenPreview() {
     MyGoalsAppTheme {
-        CalendarComponent(
+        val context = LocalContext.current
+        NewGoalScreen(
             colorScheme = MaterialTheme.colorScheme,
-            typography = MaterialTheme.typography
+            typography = MaterialTheme.typography,
+            navController = rememberNavController(),
+            /*userViewModel = viewModel(),
+            addressViewModel = viewModel(),
+            snackbarHostState = remember { SnackbarHostState() },
+            loggedUser = remember { mutableStateOf(User.emptyUser(context)) }*/
         )
     }
 }
 
+//@Preview
+//@Composable
+//fun CalendarComponentPreview() {
+//    MyGoalsAppTheme {
+//        CalendarComponent(
+//            colorScheme = MaterialTheme.colorScheme,
+//            typography = MaterialTheme.typography
+//        )
+//    }
+//}
+
 @Composable
 fun CalendarComponent(
     colorScheme: ColorScheme,
-    withYearText : Boolean = false,
-    typography: Typography
+    typography: Typography,
+    withYearText: Boolean = false
 ) {
     val actualDateState = remember { mutableStateOf(LocalDate.now()) }
     val selectedOption = remember { mutableStateOf<LocalDate?>(null) }
@@ -106,7 +153,7 @@ fun CalendarComponent(
             ) { selectedOption.value = null }
     ) {
         if (withYearText) {
-            Spacer(Modifier.height(25.dp))
+            Spacer(Modifier.height(24.dp))
             Text(
                 modifier = Modifier.align(CenterHorizontally),
                 text = actualDateState.value.year.toString(),
@@ -119,11 +166,12 @@ fun CalendarComponent(
             Modifier
                 .padding(horizontal = 25.dp, vertical = 25.dp)
                 .fillMaxWidth()
+                .wrapContentHeight()
         ) {
             Image(
                 modifier = Modifier
-                    .height(40.dp)
-                    .width(30.dp)
+                    .width(25.dp)
+                    .height(30.dp)
                     .clickable(
                         interactionSource = MutableInteractionSource(),
                         indication = null
@@ -137,12 +185,12 @@ fun CalendarComponent(
                 modifier = Modifier.align(Alignment.Center),
                 text = monthNameByMonthInt(actualDateState.value.monthValue),
                 style = typography.labelLarge,
-                fontSize = 36.sp
+                fontSize = 24.sp
             )
             Image(
                 modifier = Modifier
-                    .height(40.dp)
-                    .width(30.dp)
+                    .width(25.dp)
+                    .height(30.dp)
                     .clickable(
                         interactionSource = MutableInteractionSource(),
                         indication = null
@@ -153,20 +201,20 @@ fun CalendarComponent(
                 contentDescription = null
             )
         }
-        Spacer(Modifier.height(25.dp))
+        Spacer(Modifier.height(15.dp))
         Row(
             Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 35.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Text(text = "D", style = typography.labelLarge, fontSize = 24.sp)
-            Text(text = "S", style = typography.labelLarge, fontSize = 24.sp)
-            Text(text = "T", style = typography.labelLarge, fontSize = 24.sp)
-            Text(text = "Q", style = typography.labelLarge, fontSize = 24.sp)
-            Text(text = "Q", style = typography.labelLarge, fontSize = 24.sp)
-            Text(text = "S", style = typography.labelLarge, fontSize = 24.sp)
-            Text(text = "S", style = typography.labelLarge, fontSize = 24.sp)
+            Text(text = "D", style = typography.labelLarge, fontSize = 16.sp)
+            Text(text = "S", style = typography.labelLarge, fontSize = 16.sp)
+            Text(text = "T", style = typography.labelLarge, fontSize = 16.sp)
+            Text(text = "Q", style = typography.labelLarge, fontSize = 16.sp)
+            Text(text = "Q", style = typography.labelLarge, fontSize = 16.sp)
+            Text(text = "S", style = typography.labelLarge, fontSize = 16.sp)
+            Text(text = "S", style = typography.labelLarge, fontSize = 16.sp)
         }
         Spacer(Modifier.height(8.dp))
         Canvas(
@@ -183,11 +231,11 @@ fun CalendarComponent(
                 cornerRadius = CornerRadius(10f, 10f)
             )
         }
-        Spacer(Modifier.height(25.dp))
+        Spacer(Modifier.height(15.dp))
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 25.dp)
+                .padding(horizontal = 15.dp)
         ) {
             val firstWeekOfMonth =
                 actualDateState.value.withDayOfMonth(1).get(ChronoField.ALIGNED_WEEK_OF_YEAR)
@@ -233,9 +281,9 @@ fun CalendarComponent(
                         typography = typography
                     )
                 }
-            }
+             }
 
-            Spacer(Modifier.height(15.dp))
+            Spacer(Modifier.height(10.dp))
 
             var currentWeek = firstWeekOfMonth + 1
             do {
@@ -259,7 +307,7 @@ fun CalendarComponent(
                     }
                     currentWeek += 1
                 }
-                Spacer(Modifier.height(15.dp))
+                Spacer(Modifier.height(10.dp))
             } while (tempDate.get(ChronoField.ALIGNED_WEEK_OF_YEAR) != finalWeekOfMonth)
 
             Row(
@@ -314,7 +362,7 @@ fun DayOfCalendar(
     val day = date.dayOfMonth
     Box(
         Modifier
-            .size(45.dp)
+            .size(40.dp)
             .border(
                 2.dp,
                 if (date == LocalDate.now()) colorScheme.primary else Color.Transparent,
@@ -344,40 +392,40 @@ fun DayOfCalendar(
             day.toString(),
             style = typography.labelLarge,
             color = colorScheme.secondary,
-            fontSize = 24.sp
+            fontSize = 16.sp
         ) else Text(
             day.toString(),
             style = typography.labelLarge,
-            fontSize = 24.sp
+            fontSize = 16.sp
         )
     }
 }
 
-@Preview
-@Composable
-fun DayOfCalendarPreview() {
-    MyGoalsAppTheme {
-        val actualDateState = remember { mutableStateOf(LocalDate.now()) }
-        val selectedOption = remember { mutableStateOf<LocalDate?>(null) }
-        Row(
-            Modifier
-                .background(MaterialTheme.colorScheme.secondary)
-                .clickable { selectedOption.value = null }) {
-            DayOfCalendar(
-                date = LocalDate.now(),
-                actualDateState = actualDateState,
-                selectedOption = selectedOption,
-                colorScheme = MaterialTheme.colorScheme,
-                typography = MaterialTheme.typography
-            )
-            Spacer(Modifier.width(30.dp))
-            DayOfCalendar(
-                date = LocalDate.now().plusDays(1),
-                actualDateState = actualDateState,
-                selectedOption = selectedOption,
-                colorScheme = MaterialTheme.colorScheme,
-                typography = MaterialTheme.typography
-            )
-        }
-    }
-}
+//@Preview
+//@Composable
+//fun DayOfCalendarPreview() {
+//    MyGoalsAppTheme {
+//        val actualDateState = remember { mutableStateOf(LocalDate.now()) }
+//        val selectedOption = remember { mutableStateOf<LocalDate?>(null) }
+//        Row(
+//            Modifier
+//                .background(MaterialTheme.colorScheme.secondary)
+//                .clickable { selectedOption.value = null }) {
+//            DayOfCalendar(
+//                date = LocalDate.now(),
+//                actualDateState = actualDateState,
+//                selectedOption = selectedOption,
+//                colorScheme = MaterialTheme.colorScheme,
+//                typography = MaterialTheme.typography
+//            )
+//            Spacer(Modifier.width(30.dp))
+//            DayOfCalendar(
+//                date = LocalDate.now().plusDays(1),
+//                actualDateState = actualDateState,
+//                selectedOption = selectedOption,
+//                colorScheme = MaterialTheme.colorScheme,
+//                typography = MaterialTheme.typography
+//            )
+//        }
+//    }
+//}
